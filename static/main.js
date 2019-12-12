@@ -89,6 +89,11 @@ function main() {
                             console.log(`Error adding money`)
                         } else {
                             console.log(`Successful added ${amount} ${currency} to ${Leonid.username}`);
+                            /*на этом месте функция ломается и выдает ошибку. 
+                            https://prnt.sc/q9zd68
+                            Причем сначала у меня получилось,а потом я что-то поменял и больше никак.
+                            И в конвертации тоже пытался но не получилось. Где искать,куда смотреть?=)
+                            */ 
                             Leonid.convertation({ofCurrency,inCurrency,targetAmount},(err,data) => {
                                 if(err) {                                                                                 
                                     console.log(`Error process converting money`)
