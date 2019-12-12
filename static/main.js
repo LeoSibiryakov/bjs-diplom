@@ -2,19 +2,19 @@
 
 class Profile {
     constructor({username,name: {firstName, lastName},password}) { 
-        this.login = username;
+        this.username = username;
         this.name = {firstName, lastName};
         this.password = password;
     }
 
     addNewUser(callback) {
         return ApiConnector.createUser({
-            username: this.login,
+            username: this.username,
             name: this.name,
             password: this.password
         },
             (err,data) => {
-            console.log(`Add user ${this.login}`);
+            console.log(`Creating user ${this.username}`);
             callback(err,data);
         });
     }
@@ -33,7 +33,7 @@ class Profile {
     addMoney({currency, amount}, callback) {
         return ApiConnector.addMoney({currency, amount}, 
             (err, data) => {
-            console.log(`Added ${amount} of ${currency} to ${this.username}`);
+            console.log(`Added ${amount} ${currency} to ${this.username}`);
             callback(err, data);
         });
     }
@@ -57,7 +57,7 @@ class Profile {
 
 function getStocks(callback) {
     return ApiConnector.getStocks((err,data) => {
-        console.log(`Getting stocks`);
+        console.log(`Getting stocks info`);
         callback(err, data);
     });
 }
@@ -76,27 +76,27 @@ function main() {
 
     Leonid.addNewUser((err,data) => {
         if (err) {
-            console.log(`Error creating new user ${Leonid.username}`)
+            console.log(`Error creating new user`)
         } else {
             console.log(`${Leonid.username} is created`);
             Leonid.authorization((err,data) => {
                 if(err) {
                     console.log(`Error process authorization`)
                 } else {
-                    console.log(`${username} is created`);
-                    Leonid.addMoney({currency:'EUR',amount:'100'},(err,data) => {
+                    console.log(`${Leonid.username} is authorizing`);
+                    Leonid.addMoney({currency: 'EUR', amount:100},(err,data) => {
                         if(err) {
                             console.log(`Error adding money`)
                         } else {
-                            console.log(`Successful added ${amount} ${currency}`);
-                            Leonid.convertation({ofCurrency:'EUR',inCurrency:'NETCOIN',targetAmount:'100'},(err,data) => { /* как применить функцию получения куса валют с сервера ? */
+                            console.log(`Successful added ${amount} ${currency} to ${Leonid.username}`);
+                            Leonid.convertation({ofCurrency,inCurrency,targetAmount},(err,data) => {
                                 if(err) {                                                                                 
                                     console.log(`Error process converting money`)
                                 } else {
                                     console.log(`Successful converting ${targetAmount} ${ofCurrency} to ${inCurrency}`);
                                     Gerda.addNewUser((err,data) => {
                                         if (err) {
-                                            console.log(`Error creating new user ${username}`)
+                                            console.log(`Error creating new user ${this.username}`)
                                         } else {
                                             console.log(`${username} is created`);
                                             Leonid.moneyTransfer({whom:'Leonid',amount:'100'},(err,data) => {
@@ -118,5 +118,3 @@ function main() {
     });
 }
 main();
-
-// Уфф... //
