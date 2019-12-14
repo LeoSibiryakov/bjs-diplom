@@ -38,18 +38,18 @@ class Profile {
         });
     }
 
-    convertation({ofCurrency,inCurrency,targetAmount}, callback) {
-        return ApiConnector.convertMoney({ofCurrency,inCurrency,targetAmount},
+    convertation({fromCurrency, targetCurrency, targetAmount}, callback) {
+        return ApiConnector.convertMoney({fromCurrency, targetCurrency, targetAmount},
             (err,data) => {
-            console.log(`Converting ${ofCurrency} to ${targetAmount} ${inCurrency}`);
+            console.log(`Converting ${fromCurrency} to ${targetAmount} ${targetCurrency}`);
             callback(err,data);
         });
     }
 
-    moneyTransfer({whom,amount},callback) {
-        return ApiConnector.transferMoney({whom,amount},
+    moneyTransfer({to,amount},callback) {
+        return ApiConnector.transferMoney({to,amount},
             (err,data) => {
-            console.log(`Transferring ${amount} to ${whom}`);
+            console.log(`Transferring ${amount} NETCOIN to ${to}`);
             callback(err,data);
         });
     }
@@ -74,6 +74,15 @@ function main() {
         password:'spaniel',
     });
 
+    const addAmount = {currency: 'EUR', amount: 100};
+
+    getStocks((err, data) => {
+        if (err) {
+          console.log('Error during getting stocks');
+        }
+          
+        const getStock = data[99];
+
     Leonid.addNewUser((err,data) => {
         if (err) {
             console.log(`Error creating new user`)
@@ -84,31 +93,30 @@ function main() {
                     console.log(`Error process authorization`)
                 } else {
                     console.log(`${Leonid.username} is authorizing`);
-                    Leonid.addMoney({currency: 'EUR', amount:100},(err,data) => {
+                    Leonid.addMoney(addAmount,(err,data) => {
                         if(err) {
                             console.log(`Error adding money`)
                         } else {
-                            console.log(`Successful added ${amount} ${currency} to ${Leonid.username}`);
-                            /*на этом месте функция ломается и выдает ошибку. 
-                            https://prnt.sc/q9zd68
-                            Причем сначала у меня получилось,а потом я что-то поменял и больше никак.
-                            И в конвертации тоже пытался но не получилось. Где искать,куда смотреть?=)
-                            */ 
-                            Leonid.convertation({ofCurrency,inCurrency,targetAmount},(err,data) => {
+                            console.log(`Successful added ${addAmount.amount} ${addAmount.currency} to ${Leonid.username}`); 
+
+                            const getConvertAmount = getStock['EUR_NETCOIN']*addAmount.amount;
+
+                            Leonid.convertation({fromCurrency: addAmount.currency,targetCurrency: 'NETCOIN',targetAmount:getConvertAmount},(err,data) => {
                                 if(err) {                                                                                 
                                     console.log(`Error process converting money`)
                                 } else {
-                                    console.log(`Successful converting ${targetAmount} ${ofCurrency} to ${inCurrency}`);
+                                    console.log(`Successful converting ${addAmount.amount} ${addAmount.currency} to ${getConvertAmount} NETCOIN`);
                                     Gerda.addNewUser((err,data) => {
                                         if (err) {
-                                            console.log(`Error creating new user ${this.username}`)
+                                            console.log(`Error creating new user`)
+                                            console.log(err)
                                         } else {
-                                            console.log(`${username} is created`);
-                                            Leonid.moneyTransfer({whom:'Leonid',amount:'100'},(err,data) => {
+                                            console.log(`${Gerda.username} is created`);
+                                            Leonid.moneyTransfer({to:Gerda.username,amount:getConvertAmount},(err,data) => {
                                                 if(err) {
                                                 console.log(`Error transfer money`)
                                             } else {
-                                                console.log(`Successful transfer ${amount} to ${whom}`)
+                                                console.log(`Successful transfer ${getConvertAmount} NETCOIN to ${Gerda.username}`)
                                             }
                                 });
                             }
@@ -121,5 +129,6 @@ function main() {
 });
         }
     });
+})
 }
 main();
